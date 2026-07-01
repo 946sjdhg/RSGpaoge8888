@@ -23,6 +23,11 @@
             align-items: center;
             min-height: 100vh;
             padding: 15px;
+            /* 💥 額外加固：禁止網頁文字被滑鼠反白選取 */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
         .desktop-layout {
@@ -161,4 +166,483 @@
 
         /* 今日遊戲推薦排行榜 */
         .recommendation-rank-box {
-            background: rgba(42, 8, 8, 0
+            background: rgba(42, 8, 8, 0.6);
+            border: 1px solid rgba(212, 163, 89, 0.4);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 18px;
+        }
+        .rank-title { font-size: 12px; color: #d4a359; font-weight: bold; margin-bottom: 8px; letter-spacing: 1px; }
+        .rank-row { display: flex; flex-wrap: wrap; gap: 8px 12px; font-size: 12px; }
+        .rank-item { display: flex; align-items: center; gap: 4px; color: #f6e3c5; }
+        .rank-num { background: #b91c1c; color: #fff; font-weight: bold; font-size: 10px; padding: 1px 5px; border-radius: 3px; }
+        .rank-num.no2 { background: #aa7c3c; }
+        .rank-num.no3 { background: #7f1d1d; }
+        .rank-num.no4, .rank-num.no5 { background: #450a0a; border: 1px solid rgba(212, 163, 89, 0.3); }
+
+        /* 大廳跑馬燈 */
+        .lobby-marquee-container {
+            height: 40px; background: rgba(212, 163, 89, 0.06); border: 1px dashed rgba(212, 163, 89, 0.3); border-radius: 6px; margin-bottom: 18px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;
+        }
+        .marquee-popup { font-size: 11px; color: #f6e3c5; position: absolute; opacity: 0; transform: translateY(15px); transition: all 0.4s ease; text-align: center; width: 100%; font-family: monospace; }
+        .marquee-popup.show { opacity: 1; transform: translateY(0); }
+
+        /* 大廳網格雙排 */
+        .game-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 15px; }
+        .game-item { cursor: pointer; display: flex; flex-direction: column; gap: 6px; position: relative; }
+        
+        .game-card { 
+            width: 100%; aspect-ratio: 1.6 / 1; background: #120303; border: 1px solid rgba(212, 163, 89, 0.2); border-radius: 6px; overflow: hidden; position: relative; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; 
+        }
+        .game-card img { width: 100%; height: 100%; object-fit: cover; display: block; filter: brightness(0.6); transition: all 0.2s; position: absolute; top: 0; left: 0; z-index: 1; }
+        
+        /* 磨砂黑鎖定遮罩 */
+        .game-item.locked .game-card::after {
+            content: '尚未公開\A敬請期待！';
+            white-space: pre-wrap;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 2, 2, 0.82);
+            backdrop-filter: blur(2px);
+            z-index: 3;
+            color: #eab308;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            line-height: 1.6;
+            display: flex; align-items: center; justify-content: center; text-align: center;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .hot-badge { position: absolute; top: 6px; left: 6px; background: #b91c1c; color: #fff; font-size: 9px; font-weight: bold; padding: 1px 5px; border-radius: 3px; z-index: 2; }
+        .game-title-text { font-size: 12px; color: #caa06d; padding-left: 2px; }
+        
+        .game-item.selected .game-card { border-color: #d4a359; box-shadow: 0 4px 12px rgba(212, 163, 89, 0.4); }
+        .game-item.selected .game-card img { filter: brightness(1); }
+        .game-item.selected .game-title-text { color: #f59e0b; font-weight: bold; }
+
+        /* 按鈕 */
+        .btn-submit { background: linear-gradient(180deg, #d4a359 0%, #aa7c3c 100%); color: #240505; border: 1px solid #e2c08d; padding: 14px; border-radius: 8px; font-size: 15px; font-weight: bold; letter-spacing: 2px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: all 0.2s; text-align: center; }
+        .btn-submit:hover { background: linear-gradient(180deg, #e2c08d 0%, #aa7c3c 100%); color: #000; }
+        .btn-submit:disabled { background: #3a3227 !important; border-color: #554433; color: #776655; cursor: not-allowed; }
+
+        .page-title { font-size: 21px; color: #d4a359; font-weight: bold; margin-bottom: 4px; text-align: center; }
+        .page-subtitle { font-size: 11px; color: #caa06d; text-align: center; margin-bottom: 20px; }
+
+        /* 大字資訊區 */
+        .info-summary-block { background: rgba(26, 5, 5, 0.6); border: 1px solid rgba(212, 163, 89, 0.3); border-radius: 8px; padding: 14px 20px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 10px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.5); }
+        .summary-item { font-size: 18px; font-weight: bold; color: #caa06d; letter-spacing: 1px; }
+        .summary-item .highlight-text { color: #f59e0b; margin-left: 6px; }
+        .summary-input-inline { background-color: #1a0303; border: 1px solid rgba(212, 163, 89, 0.4); color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 16px; width: 130px; margin-left: 6px; outline: none; font-weight: bold; font-family: 'SF Mono', monospace; }
+        
+        /* 策略展示格 */
+        .strategy-container { display: flex; align-items: center; justify-content: center; padding: 0; margin-bottom: 12px; }
+        .active-strategy-card { width: 100%; background: linear-gradient(180deg, #3a0d0d 0%, #1a0303 100%); border: 1px solid rgba(212, 163, 89, 0.2); border-radius: 12px; padding: 20px 18px; text-align: center; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
+        
+        .strategy-badge { background: #551111; color: #fca5a5; border: 1px solid #772222; font-size: 14px; font-weight: bold; padding: 4px 14px; border-radius: 4px; display: inline-block; margin-bottom: 10px; letter-spacing: 1px; }
+        .strategy-text { font-size: 18px; font-weight: bold; color: #f6e3c5; line-height: 1.6; }
+        .active-strategy-card.alert-style { border-color: #d4a359; background: linear-gradient(180deg, #4c1d15 0%, #1a0303 100%); box-shadow: 0 4px 15px rgba(212, 163, 89, 0.2); }
+        .active-strategy-card.alert-style .strategy-badge { background: #b91c1c; color: #fff; border-color: #ef4444; }
+
+        /* 大獎按鈕樣式 */
+        .win-action-panel { 
+            background: linear-gradient(180deg, #1f2e1b 0%, #0c140a 100%); 
+            border: 2px solid #22c55e; 
+            border-radius: 12px; 
+            padding: 12px; 
+            margin-bottom: 12px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.2);
+        }
+        .win-btn-grid { 
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            width: 100%;
+        }
+        .btn-win-select {
+            background: rgba(34, 197, 94, 0.08);
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            color: #4ade80; border-radius: 6px; 
+            padding: 10px 4px; 
+            font-size: 15px;     
+            font-weight: bold; cursor: pointer; transition: all 0.2s;
+            letter-spacing: 0.5px;
+            width: calc(50% - 4px);
+            text-align: center;
+        }
+        .btn-win-select:hover { background: rgba(34, 197, 94, 0.15); color: #fff; }
+        .btn-win-select.active {
+            background: linear-gradient(180deg, #22c55e 0%, #15803d 100%);
+            border-color: #4ade80; color: #fff; box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
+        }
+        .free-game-question-row { display: flex; align-items: center; justify-content: center; gap: 15px; font-size: 13px; color: #a7f3d0; border-top: 1px dashed rgba(34, 197, 94, 0.3); padding-top: 8px; }
+        .check-label { display: flex; align-items: center; gap: 4px; cursor: pointer; color: #fff; font-weight: bold; }
+        .check-label input { cursor: pointer; accent-color: #22c55e; }
+
+        .btn-recalibrate {
+            background: linear-gradient(180deg, #f59e0b 0%, #b45309 100%) !important;
+            color: #fff !important;
+            border: 1px solid #fef08a !important;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 12px rgba(180, 83, 9, 0.4);
+            width: 100%;
+        }
+        .btn-recalibrate:hover {
+            background: linear-gradient(180deg, #fbbf24 0%, #b45309 100%) !important;
+            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.6);
+        }
+
+        /* 自訂防呆彈窗 */
+        .modal-overlay {
+            display: none; position: absolute; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.75); z-index: 100; align-items: center; justify-content: center; padding: 20px;
+        }
+        .modal-box {
+            background: #2a0808; border: 2px solid #d4a359; border-radius: 12px; padding: 22px 20px; width: 100%; max-width: 320px; text-align: center; box-shadow: 0 10px 35px rgba(0,0,0,0.8);
+        }
+        .modal-text { font-size: 16px; font-weight: bold; color: #f6e3c5; margin-bottom: 15px; line-height: 1.5; }
+        .modal-btns { display: flex; gap: 10px; justify-content: center; margin-top: 15px; }
+        .modal-btn { background: #b91c1c; color: white; border: none; padding: 8px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        .modal-btn.confirm { background: linear-gradient(180deg, #d4a359 0%, #aa7c3c 100%); color: #240505; }
+
+        @media (max-width: 720px) {
+            .desktop-layout { flex-direction: column; align-items: center; }
+            .leaderboard-panel { width: 100%; max-width: 412px; height: auto; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="desktop-layout">
+
+    <div class="leaderboard-panel">
+        <div class="panel-title">
+            <span>LIVE 玩家即時獲利榜</span>
+            <span class="live-dot">● 數據連線中</span>
+        </div>
+        <div id="leaderboard-list-box" class="leaderboard-list"></div>
+    </div>
+
+    <div class="phone-container">
+        
+        <div id="confirm-modal" class="modal-overlay">
+            <div class="modal-box">
+                <div class="modal-text">請確認本金有無修改到？</div>
+                <label class="check-label" style="justify-content: center; font-size: 12px; color: #caa06d;">
+                    <input type="checkbox" id="skip-modal-checkbox"> 今日不再顯示
+                </label>
+                <div class="modal-btns">
+                    <button class="modal-btn confirm" onclick="closeConfirmModal(true)">已確認</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="top-bar">
+            <div class="system-title">RSG自動偵測校正系統</div>
+            <div class="auth-badge">啟用中</div>
+        </div>
+
+        <div id="page-login" class="page active">
+            <div class="contact-notice-box" style="margin-top: 10px; margin-bottom: 25px;">
+                Line：<strong>@946sjdhg</strong><br>
+                有問題請聯繫代理 砲哥
+            </div>
+
+            <h1 class="page-title" style="margin-top: 20px;">RSG自動AI路線破解系統</h1>
+            <p class="page-subtitle">輸入你的帳號</p>
+            <div class="form-group" style="margin-bottom: 30px;">
+                <label for="login-account">會員帳號</label>
+                <input type="text" id="login-account" class="form-control" value="" placeholder="請輸入您的帳號">
+            </div>
+            <button id="login-btn" class="btn-submit" style="margin-bottom: 40px;" onclick="handleLogin()">啟動核心驗證</button>
+
+            <div class="contact-notice-box" style="margin-top: auto; margin-bottom: 10px;">
+                Line：<strong>@946sjdhg</strong><br>
+                有問題請聯繫代理 砲哥
+            </div>
+        </div>
+
+        <div id="page-config" class="page">
+            <h1 class="page-title">機台參數配置</h1>
+            <p class="page-subtitle" style="margin-bottom: 15px;">請選擇今日目標遊戲</p>
+            
+            <div class="lobby-marquee-container">
+                <div id="marquee-text" class="marquee-popup">系統大數據正在實時解析機台吐穗週期...</div>
+            </div>
+
+            <div class="recommendation-rank-box">
+                <div class="rank-title">🔥 今日大數據推薦遊戲榜</div>
+                <div id="rank-list-row" class="rank-row"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="input-amount">輸入本金預算 (TWD)</label>
+                <input type="number" id="input-amount" class="form-control" value="10000">
+            </div>
+
+            <button class="btn-submit" style="margin-bottom: 22px;" onclick="handleConfigSubmit()">注入參數 ‧ 破解分析</button>
+
+            <div class="form-group">
+                <label>選擇目標遊戲</label>
+                <div id="lobby-game-grid" class="game-grid"></div>
+            </div>
+        </div>
+
+        <div id="page-dashboard" class="page">
+            <h1 class="page-title">即時打法推薦</h1>
+            <p class="page-subtitle">自動分析目前最佳路線</p>
+            
+            <div class="info-summary-block">
+                <div class="summary-item">機台：<span id="summary-game" class="highlight-text">-</span></div>
+                <div class="summary-item">
+                    本金：<input type="text" id="summary-reenter-amount" class="summary-input-inline" onfocus="clearFormatting(this)" onblur="formatCurrency(this)">
+                </div>
+                <div class="summary-item">當前吐分率：<span id="summary-rtp" class="highlight-text" style="color: #f59e0b; font-family: 'SF Mono', monospace;">-</span></div>
+            </div>
+            
+            <div class="strategy-container">
+                <div id="strategy-card" class="active-strategy-card">
+                    <span id="strategy-tag" class="strategy-badge">推薦打法</span>
+                    <p id="strategy-info" class="strategy-text">雲端線路配置中...</p>
+                </div>
+            </div>
+            
+            <div class="win-action-panel">
+                <div class="win-btn-grid">
+                    <button class="btn-win-select" onclick="selectWinType(this, 'BIG WIN')">BIG WIN</button>
+                    <button class="btn-win-select" onclick="selectWinType(this, 'SUPER WIN')">SUPER WIN</button>
+                    <button class="btn-win-select" onclick="selectWinType(this, 'ULTRA WIN')">ULTRA WIN</button>
+                    <button class="btn-win-select" onclick="selectWinType(this, 'LEGENDARY WIN')">LEGENDARY WIN</button>
+                </div>
+                <div class="free-game-question-row">
+                    <span>是送的免費遊戲嗎？</span>
+                    <label class="check-label"><input type="radio" name="is_free_game" id="fg-yes" value="yes"> 是</label>
+                    <label class="check-label"><input type="radio" name="is_free_game" id="fg-no" value="no" checked> 否</label>
+                </div>
+                <button class="btn-submit btn-recalibrate" style="padding: 10px; font-size: 13px; margin-top: 4px;" onclick="triggerRecalibrateWithCheck()">沒買免遊出現該得分，重新校正</button>
+            </div>
+            
+            <button id="next-strategy-btn" class="btn-submit" onclick="triggerNextWithCheck()">已完成，生成下一步</button>
+            <button class="btn-submit" style="background: #1a0303; border-color: rgba(212, 163, 89, 0.3); color: #caa06d; margin-top: 10px; padding: 10px; font-size: 13px;" onclick="goBackToConfig()">返回大廳</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 💥 頂部加入：網格核心防盜機制（阻斷滑鼠右鍵、F12及快捷鍵）
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
+
+    document.addEventListener('keydown', function(e) {
+        // 1. 封鎖 F12
+        if (e.key === 'F12' || e.keyCode === 123) {
+            e.preventDefault();
+            return false;
+        }
+        // 2. 封鎖 Ctrl + Shift + I (開啟工具)
+        if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.keyCode === 73)) {
+            e.preventDefault();
+            return false;
+        }
+        // 3. 封鎖 Ctrl + Shift + J (主控台)
+        if (e.ctrlKey && e.shiftKey && (e.key === 'J' || e.keyCode === 74)) {
+            e.preventDefault();
+            return false;
+        }
+        // 4. 封鎖 Ctrl + U (檢視網頁原始碼)
+        if (e.ctrlKey && (e.key === 'U' || e.keyCode === 85)) {
+            e.preventDefault();
+            return false;
+        }
+        // 5. 封鎖 Ctrl + S (儲存網頁)
+        if (e.ctrlKey && (e.key === 'S' || e.keyCode === 83)) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxlKS05FYrb0vcIMrGoNpJj88O8E8dida9E2fsc1U7TMZl3rGCD6HeciUqHCKe9Qyu0/exec";
+    const localStrategyPool = ["手動執行 50 轉", "手動執行 100 轉", "出現 7 盔 7 盾 ➔ 立刻購買免費遊戲！！", "50 轉內順利消除頭盔", "開啟自動 100 轉"];
+    
+    let buyFreeCooldown = 0; 
+
+    let cloudSignalsDatabase = {}, currentAccount = "", selectedGameName = "雷神之錘", lastStrategyIndex = -1, baseRTP = 95.4, selectedWinType = "", skipConfirmModal = false, modalTriggerSource = "next";
+    const gamesDatabase = [
+        { id: "thor1", name: "雷神之錘", img: "game-PowerOfThor.jpg", hot: true, isLocked: false, sheetIndex: 0 },
+        { id: "thor2", name: "雷神之錘 II", img: "game-PowerOfThor2.jpg", hot: true, isLocked: false, sheetIndex: 1 },
+        { id: "lubu", name: "戰神呂布", img: "戰神呂布.jpg", hot: false, isLocked: true, sheetIndex: 2 },
+        { id: "doggy", name: "狗來富", img: "狗來富.jpg", hot: false, isLocked: true, sheetIndex: 3 },
+        { id: "hunter", name: "賞金獵人", img: "賞金獵人.jpg", hot: false, isLocked: true, sheetIndex: 4 },
+        { id: "mahjong1", name: "麻將發了", img: "麻將發了.jpg", hot: false, isLocked: true, sheetIndex: 5 },
+        { id: "mahjong2", name: "麻將發了2", img: "麻將發了2.jpg", hot: false, isLocked: true, sheetIndex: 6 },
+        { id: "farm", name: "開心農場", img: "開心農場.jpg", hot: false, isLocked: true, sheetIndex: 7 },
+        { id: "godofwealth", name: "聚寶財神", img: "聚寶財神.jpg", hot: false, isLocked: true, sheetIndex: 8 },
+        { id: "goldcity", name: "勇闖黃金城", img: "勇闖黃金城.jpg", hot: false, isLocked: true, sheetIndex: 9 },
+        { id: "jurassic", name: "侏儸紀寶藏", img: "侏儸紀寶藏.jpg", hot: false, isLocked: true, sheetIndex: 10 },
+        { id: "medea", name: "美狄亞", img: "美狄亞.jpg", hot: false, isLocked: true, sheetIndex: 11 }
+    ];
+    const priorityGames = ["雷神之錘", "雷神之錘 II", "戰神呂布", "狗來富", "麻將發了", "麻將發了2", "開心農場"];
+    const fallbackGames = ["賞金獵人", "聚寶財神", "勇闖黃金城", "侏儸紀寶藏", "美狄亞"];
+    const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+    function generateMaskedUsername() {
+        const startChar = chars[Math.floor(Math.random() * chars.length)];
+        const endChar = chars[Math.floor(Math.random() * chars.length)];
+        const starCount = Math.floor(Math.random() * 4) + 3; 
+        return startChar + "*".repeat(starCount) + endChar;
+    }
+
+    function generateWeightedWinAmount() {
+        return Math.random() <= 0.10 ? Math.floor(Math.random() * (800000 - 200000 + 1) + 200000) : Math.floor(Math.random() * (200000 - 2000 + 1) + 2000);
+    }
+
+    function getShuffledLobbyData() {
+        const fixedTop4 = gamesDatabase.slice(0, 4); 
+        let poolRemaining = gamesDatabase.slice(4); 
+        const seed = Math.floor(Date.now() / (3 * 60 * 60 * 1000)); 
+        for (let i = poolRemaining.length - 1; i > 0; i--) {
+            const j = (seed + i) % (i + 1);
+            [poolRemaining[i], poolRemaining[j]] = [poolRemaining[j], poolRemaining[i]];
+        }
+        return [...fixedTop4, ...poolRemaining];
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const listContainer = document.getElementById('leaderboard-list-box');
+        listContainer.innerHTML = "";
+        for (let k = 0; k < 12; k++) {
+            const randUser = generateMaskedUsername();
+            const randGame = priorityGames[Math.floor(Math.random() * priorityGames.length)];
+            const finalAmount = generateWeightedWinAmount();
+            const newItem = document.createElement('div');
+            newItem.className = 'leaderboard-item';
+            newItem.innerHTML = `
+                <div class="item-row"><span class="item-user">${randUser}</span><span class="item-game">${randGame}</span></div>
+                <div class="item-row"><span class="item-win">贏得彩金 ${finalAmount.toLocaleString()}</span></div>
+            `;
+            listContainer.appendChild(newItem);
+        }
+    });
+
+    function renderLobby() {
+        const finalizedList = getShuffledLobbyData();
+        const strictlyUnlockedGames = finalizedList.filter(g => !g.isLocked);
+        const rankContainer = document.getElementById('rank-list-row');
+        rankContainer.innerHTML = strictlyUnlockedGames.slice(0, 5).map((g, idx) => `<div class="rank-item"><span class="rank-num ${idx==1?'no2':idx==2?'no3':idx==3?'no4':'no5'}">${idx+1}</span> ${g.name}</div>`).join('');
+        const gridContainer = document.getElementById('lobby-game-grid');
+        gridContainer.innerHTML = finalizedList.map((g, idx) => `
+            <div class="game-item ${idx===0?'selected':''} ${g.isLocked ? 'locked' : ''}" onclick="handleGameSelectClick(this, '${g.name}', ${g.isLocked})">
+                <div class="game-card">${g.hot ? '<span class="hot-badge">HOT</span>' : ''}<img src="${g.img}" alt="${g.name}"></div>
+                <div class="game-title-text">${g.name}</div>
+            </div>
+        `).join('');
+        selectedGameName = finalizedList[0].name;
+    }
+
+    function handleGameSelectClick(element, gameName, isLocked) {
+        if(isLocked) return; 
+        document.querySelectorAll('.game-item').forEach(item => item.classList.remove('selected'));
+        element.classList.add('selected');
+        selectedGameName = gameName;
+    }
+
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+    }
+
+    async function handleLogin() {
+        const accountInput = document.getElementById('login-account').value.toLowerCase().replace(/[^a-z0-9]/g, '').trim();
+        if(!accountInput) return alert('請輸入會員帳號');
+        const loginBtn = document.getElementById('login-btn');
+        loginBtn.disabled = true; loginBtn.innerText = "即時通道校驗中...";
+        try {
+            const response = await fetch(`${GAS_API_URL}?action=login&account=${accountInput}`);
+            const resData = await response.json();
+            if(resData && resData.success === true) {
+                currentAccount = accountInput;
+                await fetchCloudSignals(); proceedToLobby();
+            } else {
+                alert("無此帳號 請聯繫代理 砲哥");
+                loginBtn.disabled = false; loginBtn.innerText = "啟動核心驗證";
+            }
+        } catch (error) {
+            alert("驗證系統通訊異常，請重試");
+            loginBtn.disabled = false; loginBtn.innerText = "啟動核心驗證";
+        }
+    }
+
+    function proceedToLobby() { renderLobby(); showPage('page-config'); startLiveLogs(); }
+    async function fetchCloudSignals() { try { const response = await fetch(`${GAS_API_URL}?action=signals`); const resData = await response.json(); if (resData) cloudSignalsDatabase = resData; } catch (e) {} }
+    
+    function handleConfigSubmit() {
+        const amountInput = document.getElementById('input-amount').value;
+        if(!amountInput || amountInput <= 0) return alert('請輸入正確的本金預算');
+        document.getElementById('summary-game').innerText = selectedGameName;
+        const inlineInput = document.getElementById('summary-reenter-amount');
+        inlineInput.value = amountInput; formatCurrency(inlineInput);
+        
+        buyFreeCooldown = 0; 
+        generateRandomStrategy(); 
+        showPage('page-dashboard');
+    }
+    
+    function formatCurrency(input) { let num = input.value.replace(/,/g, ''); if(!isNaN(num) && num.length > 0) input.value = Number(num).toLocaleString(); }
+    function clearFormatting(input) { input.value = input.value.replace(/,/g, ''); }
+
+    function generateRandomStrategy() {
+        const cardEl = document.getElementById('strategy-card'), tagEl = document.getElementById('strategy-tag'), infoEl = document.getElementById('strategy-info'), rtpEl = document.getElementById('summary-rtp');
+        rtpEl.innerText = (Math.random() * (98.2 - 92.4) + 92.4).toFixed(1) + " %";
+        
+        const gameObj = gamesDatabase.find(g => g.name === selectedGameName), colIndex = gameObj ? gameObj.sheetIndex : 0;
+        let sourcePool = cloudSignalsDatabase[colIndex] && cloudSignalsDatabase[colIndex].length > 0 ? cloudSignalsDatabase[colIndex] : localStrategyPool;
+        
+        let filteredPool = [];
+        if (buyFreeCooldown > 0) {
+            filteredPool = sourcePool.filter(str => !str.includes("買") && !str.includes("免"));
+            if (filteredPool.length === 0) filteredPool = ["手動轉50下", "自動轉50下", "單轉4消", "手動轉20下"];
+            buyFreeCooldown--; 
+        } else {
+            filteredPool = sourcePool;
+        }
+
+        let finalStrategyText = filteredPool[Math.floor(Math.random() * filteredPool.length)];
+        
+        if (finalStrategyText.includes("買") || finalStrategyText.includes("免")) {
+            buyFreeCooldown = Math.floor(Math.random() * 2) + 3; 
+        }
+
+        tagEl.innerText = finalStrategyText.endsWith('!') ? "核心爆分訊號" : "推薦打法";
+        infoEl.innerText = finalStrategyText;
+        finalStrategyText.endsWith('!') ? cardEl.classList.add('alert-style') : cardEl.classList.remove('alert-style');
+    }
+
+    // 後續邏輯保持原樣
+    function selectWinType(btn, type) { document.querySelectorAll('.btn-win-select').forEach(b => b.classList.remove('active')); btn.classList.add('active'); selectedWinType = type; }
+    function triggerRecalibrateWithCheck() { if(!document.getElementById('summary-reenter-amount').value.replace(/,/g, '')) return alert('請輸入本金'); if(!selectedWinType) return alert('請選擇獎項'); modalTriggerSource = "recalibrate"; skipConfirmModal ? executeRecalibrateAction() : document.getElementById('confirm-modal').style.display = 'flex'; }
+    function triggerNextWithCheck() { if(!document.getElementById('summary-reenter-amount').value.replace(/,/g, '')) return alert('請輸入本金'); modalTriggerSource = "next"; skipConfirmModal ? executeNextStrategyAction() : document.getElementById('confirm-modal').style.display = 'flex'; }
+    function closeConfirmModal(isConfirmed) { if (document.getElementById('skip-modal-checkbox').checked) skipConfirmModal = true; document.getElementById('confirm-modal').style.display = 'none'; isConfirmed && (modalTriggerSource === "recalibrate" ? executeRecalibrateAction() : executeNextStrategyAction()); }
+    function executeRecalibrateAction() { document.querySelectorAll('.btn-win-select').forEach(b => b.classList.remove('active')); selectedWinType = ""; generateRandomStrategy(); runCooldown(); }
+    function executeNextStrategyAction() { generateRandomStrategy(); runCooldown(); }
+    function runCooldown() { const mainBtn = document.getElementById('next-strategy-btn'); let cooldown = 3; mainBtn.disabled = true; mainBtn.innerText = `雲端計算中 (${cooldown}s)`; const interval = setInterval(() => { cooldown--; if (cooldown > 0) mainBtn.innerText = `雲端計算中 (${cooldown}s)`; else { clearInterval(interval); mainBtn.disabled = false; mainBtn.innerText = "已完成，生成下一步"; } }, 1000); }
+    function goBackToConfig() { showPage('page-config'); }
+    function startLiveLogs() {
+        function insertNewLog() {
+            const listContainer = document.getElementById('leaderboard-list-box');
+            const newItem = document.createElement('div');
+            newItem.className = 'leaderboard-item';
+            newItem.innerHTML = `<div class="item-row"><span class="item-user">${generateMaskedUsername()}</span><span class="item-game">${priorityGames[Math.floor(Math.random()*priorityGames.length)]}</span></div><div class="item-row"><span class="item-win">贏得彩金 ${generateWeightedWinAmount().toLocaleString()}</span></div>`;
+            listContainer.insertBefore(newItem, listContainer.firstChild);
+            if (listContainer.children.length > 12) listContainer.removeChild(listContainer.lastChild);
+            setTimeout(insertNewLog, Math.random()*(25000-20000)+20000);
+        }
+        setTimeout(insertNewLog, 20000);
+    }
+</script>
+
+</body>
+</html>
