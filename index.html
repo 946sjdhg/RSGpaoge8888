@@ -23,7 +23,7 @@
             align-items: center;
             min-height: 100vh;
             padding: 15px;
-            /* 💥 額外加固：禁止網頁文字被滑鼠反白選取 */
+            /* 禁止網頁文字被滑鼠反白選取 */
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
@@ -270,7 +270,8 @@
             font-size: 15px;     
             font-weight: bold; cursor: pointer; transition: all 0.2s;
             letter-spacing: 0.5px;
-            width: calc(50% - 4px);
+            /* 💥 調整為 3欄排版，5顆按鈕剛好排成 上3、下2，完美整齊 */
+            width: calc(33.33% - 6px);
             text-align: center;
         }
         .btn-win-select:hover { background: rgba(34, 197, 94, 0.15); color: #fff; }
@@ -412,7 +413,9 @@
             
             <div class="win-action-panel">
                 <div class="win-btn-grid">
+                    <!-- 💥 補入 MEGA WIN 按鈕，並維持相同調用函數 -->
                     <button class="btn-win-select" onclick="selectWinType(this, 'BIG WIN')">BIG WIN</button>
+                    <button class="btn-win-select" onclick="selectWinType(this, 'MEGA WIN')">MEGA WIN</button>
                     <button class="btn-win-select" onclick="selectWinType(this, 'SUPER WIN')">SUPER WIN</button>
                     <button class="btn-win-select" onclick="selectWinType(this, 'ULTRA WIN')">ULTRA WIN</button>
                     <button class="btn-win-select" onclick="selectWinType(this, 'LEGENDARY WIN')">LEGENDARY WIN</button>
@@ -432,33 +435,28 @@
 </div>
 
 <script>
-    // 💥 頂部加入：網格核心防盜機制（阻斷滑鼠右鍵、F12及快捷鍵）
+    // 網格核心防盜機制（阻斷滑鼠右鍵、F12及快捷鍵）
     document.addEventListener('contextmenu', function(e) {
         e.preventDefault();
     });
 
     document.addEventListener('keydown', function(e) {
-        // 1. 封鎖 F12
         if (e.key === 'F12' || e.keyCode === 123) {
             e.preventDefault();
             return false;
         }
-        // 2. 封鎖 Ctrl + Shift + I (開啟工具)
         if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.keyCode === 73)) {
             e.preventDefault();
             return false;
         }
-        // 3. 封鎖 Ctrl + Shift + J (主控台)
         if (e.ctrlKey && e.shiftKey && (e.key === 'J' || e.keyCode === 74)) {
             e.preventDefault();
             return false;
         }
-        // 4. 封鎖 Ctrl + U (檢視網頁原始碼)
         if (e.ctrlKey && (e.key === 'U' || e.keyCode === 85)) {
             e.preventDefault();
             return false;
         }
-        // 5. 封鎖 Ctrl + S (儲存網頁)
         if (e.ctrlKey && (e.key === 'S' || e.keyCode === 83)) {
             e.preventDefault();
             return false;
@@ -621,7 +619,6 @@
         finalStrategyText.endsWith('!') ? cardEl.classList.add('alert-style') : cardEl.classList.remove('alert-style');
     }
 
-    // 後續邏輯保持原樣
     function selectWinType(btn, type) { document.querySelectorAll('.btn-win-select').forEach(b => b.classList.remove('active')); btn.classList.add('active'); selectedWinType = type; }
     function triggerRecalibrateWithCheck() { if(!document.getElementById('summary-reenter-amount').value.replace(/,/g, '')) return alert('請輸入本金'); if(!selectedWinType) return alert('請選擇獎項'); modalTriggerSource = "recalibrate"; skipConfirmModal ? executeRecalibrateAction() : document.getElementById('confirm-modal').style.display = 'flex'; }
     function triggerNextWithCheck() { if(!document.getElementById('summary-reenter-amount').value.replace(/,/g, '')) return alert('請輸入本金'); modalTriggerSource = "next"; skipConfirmModal ? executeNextStrategyAction() : document.getElementById('confirm-modal').style.display = 'flex'; }
